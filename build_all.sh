@@ -77,14 +77,14 @@ then
     cd ${CURL_SRC_DIR}
     build_curl aarch64-linux-android
 
-elif [ "$ANDROID_TARGET_ABI" == "x86" ]
+elif [ "$ANDROID_ABI" == "x86" ]
 then
     cd ${OPENSSL_SRC_DIR}
     build_openssl i686-linux-android android-x86
     cd ${CURL_SRC_DIR}
     build_curl i686-linux-android
 
-elif [ "$ANDROID_TARGET_ABI" == "x86_64" ]
+elif [ "$ANDROID_ABI" == "x86_64" ]
 then
     cd ${OPENSSL_SRC_DIR}
     build_openssl x86_64-linux-android android-x86_64
