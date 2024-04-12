@@ -1,0 +1,79 @@
+name: build curl+openssl armeabi-v7a
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  OPENSSL_VERSION: 3.3.0
+  CURL_VERSION: 8.7.1
+  ANDROID_NDK_VERSION: r23c
+  WORK_PATH: /home/runner/work/curl-openssl-android/curl-openssl-android
+  ANDROID_ABI: armeabi-v7a
+
+permissions:
+  contents: write
+
+jobs:
+  compile_for_android_armeabi-v7a:
+    name: compile for armeabi-v7a
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Install aria2'
+        run: |
+          sudo apt -yqq update
+          sudo apt install -yqq aria2
+      
+      - name: 'Download Android NDK'
+        id: download_ndk
+        run: |
+          aria2c https://dl.google.com/android/repository/android-ndk-${{env.ANDROID_NDK_VERSION}}-linux.zip
+          unzip android-ndk-${{env.ANDROID_NDK_VERSION}}-linux.zip
+          echo "status=success" >> $GITHUB_OUTPUT
+          
+      - name: 'Download OpenSSL'
+        id: download_openssl
+        run: |
+          aria2c https://www.openssl.org/source/openssl-${{env.OPENSSL_VERSION}}.tar.gz
+          tar -zxvf openssl-${{env.OPENSSL_VERSION}}.tar.gz
+          echo "status=success" >> $GITHUB_OUTPUT
+          
+      - name: 'Download Curl'
+        id: download_curl
+        run: |
+          aria2c https://curl.se/download/curl-${{env.CURL_VERSION}}.tar.gz
+          tar -zxvf curl-${{env.CURL_VERSION}}.tar.gz
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: 'Compile Openssl & Curl'
+        id: compile
+        if: steps.download_ndk.outputs.status == 'success' && steps.download_openssl.outputs.status == 'success' && steps.download_curl.outputs.status == 'success' && !cancelled()
+        run: |
+          bash ./build_all.sh
+          echo "status=success" >> $GITHUB_OUTPUT
+        env:
+            OPENSSL_VERSION: ${{env.OPENSSL_VERSION}}
+            CURL_VERSION: ${{env.CURL_VERSION}}
+            ANDROID_NDK_VERSION: ${{env.ANDROID_NDK_VERSION}}
+            WORK_PATH: ${{env.WORK_PATH}}
+            ANDROID_ABI: ${{env.ANDROID_ABI}}
+        
+      - name: 'Generate tar-zip'
+        id: ziptar
+        run: |
+          tar -zcvf curl-${{env.CURL_VERSION}}-${{env.ANDROID_ABI}}.tar.gz -C ${{env.WORK_PATH}}/build curl-${{env.CURL_VERSION}}
+          tar -zcvf openssl-${{env.OPENSSL_VERSION}}-${{env.ANDROID_ABI}}.tar.gz -C ${{env.WORK_PATH}}/build openssl-${{env.OPENSSL_VERSION}}
+          echo "status=success" >> $GITHUB_OUTPUT
+      
+      - name: 'Upload zips to release'
+        if: steps.ziptar.outputs.status == 'success' && !cancelled()
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{env.CURL_VERSION}}-v${{env.OPENSSL_VERSION}}
+          files: |
+            ${{env.WORK_PATH}}/openssl-${{env.OPENSSL_VERSION}}-${{env.ANDROID_ABI}}.tar.gz
+            ${{env.WORK_PATH}}/curl-${{env.CURL_VERSION}}-${{env.ANDROID_ABI}}.tar.gz
