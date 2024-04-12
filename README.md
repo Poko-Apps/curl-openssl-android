@@ -4,8 +4,8 @@ This GitHub Action compiles the latest OpenSSL source and the latest Curl source
 ## ABIs We Build (Currently)
 * [x] armeabi-v7a
 * [x] arm64-v8a
-* [ ] x86
-* [ ] x86_64
+* [x] x86
+* [x] x86_64
 
 ## Notes
 * Curl is built with SSL/TLS support.

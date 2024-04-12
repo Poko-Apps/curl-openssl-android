@@ -20,7 +20,8 @@ function build_openssl() {
     mkdir -p ${INSTALL_DIR}
     
     ./Configure ${OPENSSL_ARCH} no-tests no-unit-test no-shared -static no-asm -D__ANDROID_API__=${MIN_API} --prefix=${INSTALL_DIR}
-    make && make install_sw
+    make -j$(($(getconf _NPROCESSORS_ONLN) + 1))
+    make install_sw
     #clean up
     rm -rf ${OPENSSL_SRC_DIR}
     rm -rf ${INSTALL_DIR}/bin
@@ -51,7 +52,7 @@ function build_curl() {
                 --with-openssl=${BUILD_DIR}/openssl-${OPENSSL_VERSION}/${ANDROID_ABI} \
                 --with-pic --disable-shared
 
-    make
+    make -j$(($(getconf _NPROCESSORS_ONLN) + 1))
     make install
     #clean up
     rm -rf ${CURL_SRC_DIR}
@@ -65,20 +66,30 @@ function build_curl() {
 if [ "$ANDROID_ABI" == "armeabi-v7a" ]
 then
     cd ${OPENSSL_SRC_DIR}
-    #build openssl first
     build_openssl armv7a-linux-androideabi android-arm
-    #if openssl build success, then build curl
     cd ${CURL_SRC_DIR}
     build_curl armv7a-linux-androideabi
     
 elif [ "$ANDROID_ABI" == "arm64-v8a" ]
 then
     cd ${OPENSSL_SRC_DIR}
-    #build openssl first
     build_openssl aarch64-linux-android android-arm64
-    #if openssl build success, then build curl
     cd ${CURL_SRC_DIR}
     build_curl aarch64-linux-android
+
+elif [ "$ANDROID_TARGET_ABI" == "x86" ]
+then
+    cd ${OPENSSL_SRC_DIR}
+    build_openssl i686-linux-android android-x86
+    cd ${CURL_SRC_DIR}
+    build_curl i686-linux-android
+
+elif [ "$ANDROID_TARGET_ABI" == "x86_64" ]
+then
+    cd ${OPENSSL_SRC_DIR}
+    build_openssl x86_64-linux-android android-x86_64
+    cd ${CURL_SRC_DIR}
+    build_curl x86_64-linux-android
 else
     echo "Unsupported target ABI: $ANDROID_ABI"
     exit 1
