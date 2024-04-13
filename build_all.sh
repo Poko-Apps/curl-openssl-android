@@ -20,7 +20,7 @@ function build_openssl() {
     mkdir -p ${INSTALL_DIR}
     
     ./Configure ${OPENSSL_ARCH} no-tests no-unit-test no-shared -static no-asm -D__ANDROID_API__=${MIN_API} --prefix=${INSTALL_DIR}
-    make -j$(($(getconf _NPROCESSORS_ONLN) + 1))
+    make -j$(($(getconf _NPROCESSORS_ONLN) * 2))
     make install_sw
     #clean up
     rm -rf ${OPENSSL_SRC_DIR}
@@ -52,12 +52,13 @@ function build_curl() {
                 --with-openssl=${BUILD_DIR}/openssl-${OPENSSL_VERSION}/${ANDROID_ABI} \
                 --with-pic --disable-shared
 
-    make -j$(($(getconf _NPROCESSORS_ONLN) + 1))
+    make -j$(($(getconf _NPROCESSORS_ONLN) * 2))
     make install
     #clean up
     rm -rf ${CURL_SRC_DIR}
     rm -rf ${INSTALL_DIR}/bin
     rm -rf ${INSTALL_DIR}/share
+    rm -rf ${INSTALL_DIR}/lib/pkgconfig
 }
 
 
