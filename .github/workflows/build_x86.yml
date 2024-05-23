@@ -6,7 +6,7 @@ on:
 
 env:
   OPENSSL_VERSION: 3.3.0
-  CURL_VERSION: 8.7.1
+  CURL_VERSION: 8.8.0
   ANDROID_NDK_VERSION: r23c
   WORK_PATH: ${{github.workspace}}
   ANDROID_ABI: x86
@@ -74,7 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{env.CURL_VERSION}}-v${{env.OPENSSL_VERSION}}
-          body: "* Curl used - v${{env.CURL_VERSION}}\n* OpenSSL used -v${{env.OPENSSL_VERSION}}"
+          body: "* Curl used - v${{env.CURL_VERSION}}\n* OpenSSL used - v${{env.OPENSSL_VERSION}}"
           files: |
             ${{env.WORK_PATH}}/openssl-${{env.OPENSSL_VERSION}}-${{env.ANDROID_ABI}}.tar.gz
             ${{env.WORK_PATH}}/curl-${{env.CURL_VERSION}}-${{env.ANDROID_ABI}}.tar.gz

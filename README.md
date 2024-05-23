@@ -13,7 +13,9 @@ This GitHub Action compiles the latest OpenSSL source and the latest Curl source
 * Minimum API set to 21 both for Curl and OpenSSL
 
 ## Download
-Downloads are available in the release section. Release names and tags follow this format: {curl_version-openssl_version}.
+Downloads are available in the release section. Release names and tags follow this format:
+
+<b>{curlVersion-opensslVersion}</b>.
 
 ## Thanks
 * [217heidai](https://github.com/217heidai/openssl_for_android)
