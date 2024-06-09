@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 env:
-  OPENSSL_VERSION: 3.3.0
+  OPENSSL_VERSION: 3.3.1
   CURL_VERSION: 8.8.0
   ANDROID_NDK_VERSION: r23c
   WORK_PATH: ${{github.workspace}}
