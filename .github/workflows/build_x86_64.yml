@@ -6,7 +6,7 @@ on:
 
 env:
   OPENSSL_VERSION: 3.3.1
-  CURL_VERSION: 8.8.0
+  CURL_VERSION: 8.9.0
   ANDROID_NDK_VERSION: r23c
   WORK_PATH: ${{github.workspace}}
   ANDROID_ABI: x86_64
