@@ -5,8 +5,8 @@ on:
     branches: [ master ]
 
 env:
-  OPENSSL_VERSION: 3.3.1
-  CURL_VERSION: 8.9.1
+  OPENSSL_VERSION: 3.3.2
+  CURL_VERSION: 8.10.0
   ANDROID_NDK_VERSION: r23c
   WORK_PATH: ${{github.workspace}}
   ANDROID_ABI: x86_64
@@ -36,7 +36,7 @@ jobs:
       - name: 'Download OpenSSL'
         id: download_openssl
         run: |
-          aria2c https://www.openssl.org/source/openssl-${{env.OPENSSL_VERSION}}.tar.gz
+          aria2c https://github.com/openssl/openssl/releases/download/openssl-${{env.OPENSSL_VERSION}}/openssl-${{env.OPENSSL_VERSION}}.tar.gz
           tar -zxvf openssl-${{env.OPENSSL_VERSION}}.tar.gz
           echo "status=success" >> $GITHUB_OUTPUT
           
